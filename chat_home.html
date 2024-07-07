@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Home</title>
+</head>
+<body>
+    <h1>Chat Rooms</h1>
+    <ul>
+        {% for chat in chat_instances %}
+            <li><a href="{{ url_for('ChatInstance', chat_id=chat.chat_id) }}">Chat Room {{ chat.chat_id }}</a></li>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('new_chat') }}" method="get">
+        <button type="submit">Start New Chat</button>
+    </form>
+    <button id="logout-button">Logout</button>
+    <script type="text/javascript">
+        document.getElementById('logout-button').onclick = function() {
+            window.location.href = "{{ url_for('logout') }}";
+        };
+    </script>
+</body>
+</html>

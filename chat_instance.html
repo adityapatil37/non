@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/chat.js"></script>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div id="chat-box" id="chat">
+        {% for message in chat_history %}
+            <div><strong>{{ message.sender }}:</strong> {{ message.message }}</div>
+        {% endfor %}
+    </div>
+    <input type="text" id="message-input" placeholder="Type your message here...">
+    <button id="send-button" id="send">Send</button>
+    <button id="logout-button">Logout</button>
+    <button id="back-button">Back to Chat Rooms</button>
+
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function() {
+            socket.emit('join_room', {'chat_id': '{{ chat_id }}'});
+        });
+
+        socket.on('receive_message', function(data) {
+            if (data.chat_id === '{{ chat_id }}') {
+                $('#chat-box').append('<div><strong>' + data.sender + ':</strong> ' + data.message + '</div>');
+            }
+        });
+
+        $('#send-button').click(function() {
+            var message = $('#message-input').val();
+            socket.emit('send_message', {'chat_id': '{{ chat_id }}', 'message': message});
+            $('#message-input').val('');
+        });
+
+        $('#logout-button').click(function() {
+            window.location.href = "{{ url_for('logout') }}";
+        });
+
+        $('#back-button').click(function() {
+            window.location.href = "{{ url_for('ChatHome') }}";
+        });
+    </script>
+</body>
+</html>
